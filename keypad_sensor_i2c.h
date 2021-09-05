@@ -19,7 +19,12 @@ class KeypadSensor : public Component, public Sensor {
       {'3', '6', '9', '.'},
       {'A', 'B', 'C', 'D'}
     };
+    
+    bool keyPublished = false;
 
+    static const unsigned int resetTime = 500;
+    unsigned int lastPublish = 0;
+    
     // define active Pin (4x4)
     byte rowPins[n_rows] = {0, 1, 2, 3}; // Connect to Keyboard Row Pin
     byte colPins[n_cols] = {4, 5, 6, 7}; // Connect to Pin column of keypad.
