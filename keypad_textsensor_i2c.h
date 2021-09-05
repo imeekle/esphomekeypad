@@ -26,8 +26,9 @@ class KeypadTextSensor : public Component, public TextSensor {
       {'*', 'B', 'C', '#'}
     };
     
-    byte colPins[n_cols] = {0, 1, 2, 3};
-    byte rowPins[n_rows] = {4, 5, 6, 7};
+    // define active Pin (4x4)
+    byte colPins[n_cols] = {0, 1, 2, 3}; // Connect to Keyboard Row Pin
+    byte rowPins[n_rows] = {4, 5, 6, 7}; // Connect to Pin column of keypad.
     
     // makeKeymap (keys): Define Keymap
     // rowPins: Set Pin to Keyboard Row
