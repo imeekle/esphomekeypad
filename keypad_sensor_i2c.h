@@ -1,7 +1,9 @@
 #include "esphome.h"
+#include <Keypad_I2C.h>
 #include <Key.h>
 #include <Keypad.h>
-#include <Keypad_I2C.h>
+#include <Wire.h>
+
 
 #define I2CADDR 0x20 // Set the Address of the PCF8574
 
@@ -36,14 +38,16 @@ class KeypadSensor : public Component, public Sensor {
     // COLS: Set the number of Columns
     // I2CADDR: Set the Address for i2C
     // PCF8574: Set the number IC
-    Keypad_I2C myKeypad = Keypad(makeKeymap (keys), rowPins, colPins, n_rows, n_cols, I2CADDR, PCF8574);
+    Keypad_I2C customKeypad( makeKeymap (keys), rowPins, colPins, n_rows, n_cols, I2CADDR);
 
     void setup() override {
     // This will be called by App.setup()
+        Wire.begin()
+        customKeypad.begin()
     }
     void loop() override {
     // This will be called by App.loop()
-        char myKey = myKeypad.getKey();
+        char myKey = customKeypad.getKey();
         if (myKey != NO_KEY){
             int key = myKey - 48;
             publish_state(key);
