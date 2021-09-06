@@ -10,55 +10,55 @@ class KeypadSensor : public Component, public Sensor {
 
     public:
 
-    const byte n_rows = 4; // Set the number of Rows
-    const byte n_cols = 4; // Set the number of Columns
+        static const byte ROWS = 4; // Set the number of Rows
+        static const byte COLS = 4; // Set the number of Columns
 
-    // Set the Key at Use (4x4)
-    char keys[n_rows] [n_cols] = {
-      {'1', '4', '7', '/'},
-      {'2', '5', '8', '0'},
-      {'3', '6', '9', '.'},
-      {'A', 'B', 'C', 'D'}
-    };
+        // Set the Key at Use (4x4)
+        char keys[ROWS][COLS] = {
+          {'1', '4', '7', '/'},
+          {'2', '5', '8', '0'},
+          {'3', '6', '9', '.'},
+          {'A', 'B', 'C', 'D'}
+        };
     
-    bool keyPublished = false;
+        bool keyPublished = false;
 
-    static const unsigned int resetTime = 500;
-    unsigned int lastPublish = 0;
+        static const unsigned int resetTime = 500;
+        unsigned int lastPublish = 0;
     
-    // define active Pin (4x4)
-    byte rowPins[n_rows] = {0, 1, 2, 3}; // Connect to Keyboard Row Pin
-    byte colPins[n_cols] = {4, 5, 6, 7}; // Connect to Pin column of keypad.
+        // define active Pin (4x4)
+        byte rowPins[ROWS] = {0, 1, 2, 3}; // Connect to Keyboard Row Pin
+        byte colPins[COLS] = {4, 5, 6, 7}; // Connect to Pin column of keypad.
 
-    // makeKeymap (keys): Define Keymap
-    // rowPins:Set Pin to Keyboard Row
-    // colPins: Set Pin Column of Keypad
-    // ROWS: Set Number of Rows.
-    // COLS: Set the number of Columns
-    // I2CADDR: Set the Address for i2C
-    // PCF8574: Set the number IC
-    Keypad_I2C customKeypad( makeKeymap (keys), rowPins, colPins, n_rows, n_cols, I2CADDR);
+        // makeKeymap (keys): Define Keymap
+        // rowPins:Set Pin to Keyboard Row
+        // colPins: Set Pin Column of Keypad
+        // ROWS: Set Number of Rows.
+        // COLS: Set the number of Columns
+        // I2CADDR: Set the Address for i2C
+        // PCF8574: Set the number IC
+        Keypad_I2C myKeypad = Keypad_I2C ( makeKeymap (keys), rowPins, colPins, ROWS, COLS, I2CADDR, PCF8574);
 
-    void setup() override {
-    // This will be called by App.setup()
-        Wire.begin()
-        customKeypad.begin()
-    }
-    void loop() override {
-    // This will be called by App.loop()
-        char myKey = customKeypad.getKey();
-        if (myKey != NO_KEY){
-            int key = myKey - 48;
-            publish_state(key);
-            keyPublished = true;
-            lastPublish = millis();
+        void setup() override {
+        // This will be called by App.setup()
+            Wire.begin();
+            myKeypad.begin();
         }
-        else{
-            if (keyPublished && (millis() - lastPublish) >= resetTime){
-                publish_state(NAN);
-                keyPublished = false;
+        void loop() override {
+        // This will be called by App.loop()
+            char myKey = myKeypad.getKey();
+            if (myKey != NO_KEY) {
+                ESP_LOGD("custom","A key has been pressed!");
+                int key = myKey - 48;
+                publish_state(key);
+                keyPublished = true;
+                lastPublish = millis();
+            }
+            else {
+                if (keyPublished && (millis() - lastPublish) >= resetTime) {
+                    publish_state(NAN);
+                    keyPublished = false;
+                }
             }
         }
-
-    }
 };
