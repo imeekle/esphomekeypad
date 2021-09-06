@@ -1,6 +1,5 @@
 #include "esphome.h"
 #include <Keypad_I2C.h>
-#include <Key.h>
 #include <Keypad.h>
 #include <Wire.h>
 
