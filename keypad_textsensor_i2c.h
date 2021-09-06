@@ -1,5 +1,4 @@
 #include "esphome.h"
-#include <Key.h>
 #include <Keypad.h>
 #include <Keypad_I2C.h>
 
@@ -27,24 +26,26 @@ class KeypadTextSensor : public Component, public TextSensor {
     };
     
     // define active Pin (4x4)
-    byte colPins[n_cols] = {0, 1, 2, 3}; // Connect to Keyboard Row Pin
-    byte rowPins[n_rows] = {4, 5, 6, 7}; // Connect to Pin column of keypad.
-    
+    byte rowPins[n_rows] = {0, 1, 2, 3}; // Connect to Keyboard Row Pin
+    byte colPins[n_cols] = {4, 5, 6, 7}; // Connect to Pin column of keypad.
+
     // makeKeymap (keys): Define Keymap
-    // rowPins: Set Pin to Keyboard Row
+    // rowPins:Set Pin to Keyboard Row
     // colPins: Set Pin Column of Keypad
-    // n_rows: Set Number of Rows.
-    // n_cols: Set the number of Columns
+    // ROWS: Set Number of Rows.
+    // COLS: Set the number of Columns
     // I2CADDR: Set the Address for i2C
     // PCF8574: Set the number IC
-    Keypad_I2C myKeypad = Keypad(makeKeymap (keys), rowPins, colPins, n_rows, n_cols, I2CADDR, PCF8574);
+    Keypad_I2C customKeypad( makeKeymap (keys), rowPins, colPins, n_rows, n_cols, I2CADDR);
 
     void setup() override {
     // This will be called by App.setup()
+        Wire.begin()
+        customKeypad.begin()
     }
     void loop() override {
     // This will be called by App.loop()
-        char myKey = myKeypad.getKey();
+        char myKey = customKeypad.getKey();
         if (myKey != NO_KEY){
             if (myKey == '#'){
                 publish_state(keysequenz);
