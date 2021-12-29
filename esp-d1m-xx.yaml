@@ -1,0 +1,99 @@
+substitutions:
+   device_name: esp-d1m-xx
+   device_name_upper: ESP Wemos xx
+   device_icon: mdi:chip
+   device_ip: x.x.x.x
+
+
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: d1_mini
+  includes:
+    - keypad_sensor_i2c.h   #file located here: /config/keypad_sensor_i2c.h
+    - Keypad_I2C.h          #file located here: /config/Keypad_I2C.h
+  libraries:                #built-in libraries
+    - "Keypad"
+    - "Wire"
+
+
+#### NOTE: this is the output for the below keypad (see keypad_sensor_i2c.h)
+#        // Set the Key at Use (4x4)
+#        char keys[ROWS][COLS] = {
+#          {'1', '4', '7', '/'},
+#          {'2', '5', '8', '0'},
+#          {'3', '6', '9', '.'},
+#          {'A', 'B', 'C', 'D'}
+#        };
+
+#### NOTE: this is the functioning order of pins (see keypad_sensor_i2c.h)
+#        byte rowPins[ROWS] = {2, 4, 5, 6}; // Connect to Keyboard Row Pin
+#        byte colPins[COLS] = {7, 0, 1, 3}; // Connect to Pin column of keypad.
+
+
+wifi:
+  networks:
+  - ssid: !secret ssid_wifi_dvshem
+    password: !secret pwd_wifi_dvshem
+    manual_ip:
+      static_ip: ${device_ip}
+      gateway: x.x.x.x
+      subnet: 255.255.255.0
+      dns1: x.x.x.x
+      dns2: x.x.x.x
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${device_name_upper} Fallback Hotspot
+    password: !secret pwd_wifi_backupap
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Web Server (optional)
+web_server:
+  port: 80
+
+# Enable Home Assistant API
+api:
+  password: !secret pwd_esp_api_ota
+
+ota:
+  password: !secret pwd_esp_api_ota
+
+############################################################################################
+############################################################################################
+
+
+# The following can be omitted 
+#  - platform: restart
+#    name: ${devicename} restart 
+
+binary_sensor:
+  - platform: status
+    name: ${device_name} status
+
+
+sensor:
+  - platform: wifi_signal
+    name: ${device_name} wifi signal
+    update_interval: 600s
+ 
+  - platform: uptime
+    name: ${device_name} uptime
+  
+## Custom Keypad Sensor
+  - platform: custom
+    lambda: |-
+      auto my_sensor = new KeypadSensor();
+      App.register_component(my_sensor);
+      return {my_sensor};
+    
+    sensors:
+      name: ${device_name} Keypad Sensor
+
+
+############################################################################################
+############################################################################################
