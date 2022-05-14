@@ -1,7 +1,7 @@
 #include "esphome.h"
-#include <Keypad_I2C.h>
 #include <Keypad.h>
 #include <Wire.h>
+#include "Keypad_I2C/Keypad_I2C.h"  //downloaded library folder located in /src folder
 
 
 #define I2CADDR 0x20 // Set the Address of the PCF8574
@@ -27,8 +27,8 @@ class KeypadSensor : public Component, public Sensor {
         unsigned int lastPublish = 0;
     
         // define active Pin (4x4)
-        byte rowPins[ROWS] = {0, 1, 2, 3}; // Connect to Keyboard Row Pin
-        byte colPins[COLS] = {4, 5, 6, 7}; // Connect to Pin column of keypad.
+        byte rowPins[ROWS] = {2, 4, 5, 6}; // Connect to Keyboard Row Pin
+        byte colPins[COLS] = {7, 0, 1, 3}; // Connect to Pin column of keypad.
 
         // makeKeymap (keys): Define Keymap
         // rowPins:Set Pin to Keyboard Row
