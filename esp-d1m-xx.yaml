@@ -9,13 +9,13 @@ esphome:
   name: ${device_name}
   platform: ESP8266
   board: d1_mini
-  includes:
-    - keypad_sensor_i2c.h   #file located here: /config/keypad_sensor_i2c.h
-    - Keypad_I2C.h          #file located here: /config/Keypad_I2C.h
   libraries:                #built-in libraries
     - "Keypad"
     - "Wire"
-
+  includes:
+    - Keypad_I2C          #library folder located here: /config/Keypad_I2C
+    - keypad_sensor_i2c.h   #file located here: /config/keypad_sensor_i2c.h
+    
 
 #### NOTE: this is the output for the below keypad (see keypad_sensor_i2c.h)
 #        // Set the Key at Use (4x4)
@@ -39,8 +39,6 @@ wifi:
       static_ip: ${device_ip}
       gateway: x.x.x.x
       subnet: 255.255.255.0
-      dns1: x.x.x.x
-      dns2: x.x.x.x
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -63,8 +61,8 @@ api:
 ota:
   password: !secret pwd_esp_api_ota
 
-############################################################################################
-############################################################################################
+##########################################################
+##########################################################
 
 
 # The following can be omitted 
@@ -83,7 +81,9 @@ sensor:
  
   - platform: uptime
     name: ${device_name} uptime
-  
+
+##########################################################
+
 ## Custom Keypad Sensor
   - platform: custom
     lambda: |-
@@ -95,5 +95,5 @@ sensor:
       name: ${device_name} Keypad Sensor
 
 
-############################################################################################
-############################################################################################
+##########################################################
+##########################################################
